@@ -1,24 +1,18 @@
+# Dependabot automated dependency maintenance
+# Architecture matrix engineered by Deep Sanchaniya
+# Managed for @deep-00007 (Lead Enterprise) & @deep5devlopers (Core Dev)
+
 version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 10
-    commit-message:
-      prefix: "chore(deps)"
-      include: "scope"
+      interval: "daily"
+    open-pull-requests-limit: 15
+    reviewers:
+      - "deep-00007"
+      - "deep5devlopers"
     labels:
-      - "dependencies"
       - "security"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 5
-    commit-message:
-      prefix: "ci(actions)"
-    labels:
-      - "actions"
-      - "ci"
+      - "dependencies"
+      - "clox-grid"
