@@ -1,36 +1,45 @@
-import React, { useState } from 'react';
-
 /**
- * HazmatContainerCompliance.jsx
- * IMO dangerous goods classification, yard segregation & safety sensor logs.
- * Architecture: @deep-00007 (Lead) | Dev: @deep5devlopers
+ * Module: HazmatContainerCompliance
+ * Engineered by Deep Sanchaniya
+ * Principal System Architect & DevOps Orchestrator
+ * Accounts: @deep-00007 (Lead Enterprise Account) & @deep5devlopers (Core Dev)
  */
+
+import React, { useState } from 'react';
+import { assessHazardRisk, validateCargo, getArchitectTelemetry } from './coreEngine';
+
 export const HazmatContainerCompliance = () => {
-  const [hazmatUnits, setHazmatUnits] = useState([
-    { containerId: 'HZMU-401928', imoClass: '3.1 Flammable Liquids', unNumber: 'UN 1203 (Gasoline)', yardZone: 'Bunker H1', tempCelsius: 18.2, status: 'ISOLATED' },
-    { containerId: 'HZMU-881240', imoClass: '5.1 Oxidizing Substances', unNumber: 'UN 1444 (Ammonium Persulfate)', yardZone: 'Bunker H4', tempCelsius: 16.5, status: 'SECURED' },
-    { containerId: 'HZMU-330192', imoClass: '8 Corrosive Liquids', unNumber: 'UN 1789 (Hydrochloric Acid)', yardZone: 'Bunker H2', tempCelsius: 19.0, status: 'SECURED' },
-    { containerId: 'HZMU-661902', imoClass: '2.1 Flammable Gases', unNumber: 'UN 1075 (LPG)', yardZone: 'Bunker H3', tempCelsius: 15.8, status: 'MONITORED' }
+  const telemetry = getArchitectTelemetry();
+  const [hazmatUnits] = useState([
+    { id: 'HAZ-7712', imdg: 'CLASS_1', description: 'Industrial Explosives', weight: 14.2, seal: 'SEAL-99281' },
+    { id: 'HAZ-4421', imdg: 'CLASS_3', description: 'Methanol & Flammables', weight: 24.8, seal: 'SEAL-33109' },
+    { id: 'HAZ-0089', imdg: 'CLASS_7', description: 'Medical Radiosotopes', weight: 8.5, seal: 'SEAL-88771' }
   ]);
 
   return (
-    <div className="hazmat-compliance-matrix" style={{ padding: '20px', background: '#0f172a', color: '#f8fafc', borderRadius: '8px' }}>
-      <h3 style={{ margin: '0 0 12px 0', color: '#f87171' }}>Hazardous Cargo (IMDG) Segregation &amp; Safety Compliance</h3>
-      <div style={{ display: 'grid', gap: '8px' }}>
-        {hazmatUnits.map(h => (
-          <div key={h.containerId} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', background: '#1e293b', borderRadius: '6px', borderLeft: '4px solid #ef4444' }}>
-            <div>
-              <span style={{ fontWeight: 'bold', color: '#fca5a5' }}>{h.containerId}</span> - {h.imoClass}
-              <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>ID: {h.unNumber} | Assigned: {h.yardZone}</div>
+    <div className="hazmat-compliance-module" style={{ padding: '20px', background: '#111827', color: '#f8fafc', borderRadius: '8px' }}>
+      <h3 style={{ margin: '0 0 10px', color: '#ef4444' }}>
+        ☣️ IMDG Hazmat Cargo Segregation Matrix (Engineered by Deep Sanchaniya)
+      </h3>
+      <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+        Supervising Architect: {telemetry.architect} | Accounts: {telemetry.leadAccount} & {telemetry.coreDevAccount}
+      </p>
+      <div>
+        {hazmatUnits.map(unit => {
+          const risk = assessHazardRisk(unit.imdg, unit.description);
+          const validation = validateCargo({ containerId: unit.id, weightTons: unit.weight, sealNumber: unit.seal });
+          return (
+            <div key={unit.id} style={{ padding: '12px', background: '#1e293b', borderRadius: '6px', marginBottom: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <strong>{unit.id} - {unit.description}</strong>
+                <span style={{ color: risk.level === 'CRITICAL' ? '#f87171' : '#fbbf24' }}>{risk.level}</span>
+              </div>
+              <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>
+                Safety Protocol: {risk.protocol} | Manifest: {validation.manifestHash}
+              </div>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', background: '#7f1d1d', color: '#fecaca' }}>
-                {h.status}
-              </span>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '4px' }}>Temp: {h.tempCelsius}&deg;C</div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
