@@ -9,8 +9,8 @@ export const Clock = () => {
   }, []);
 
   return (
-    <div className=clox-container>
-      <h2 className="title">Current Time Dashboard</h2>
+    <div className="clox-container">
+      <h2>Current Time</h2>
       <div className="time-display">{time.toLocaleTimeString()}</div>
     </div>
   );
