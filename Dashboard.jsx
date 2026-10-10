@@ -1,124 +1,126 @@
 import React, { useState, useEffect } from 'react';
 
+/**
+ * 🏗️ CLOX Logistical Core - Engineered by @deep-00007 & @deep5devlopers
+ * High-performance enterprise maritime terminal & container stock matrix.
+ */
 export const Dashboard = () => {
   const [metrics, setMetrics] = useState({
-    activeVessels: 4,
-    yardCapacityPercent: 78.4,
-    activeCranes: 12,
-    totalContainersHandled: 14280,
-    quayThroughputTeuHr: 342
+    activeVessels: 6,
+    yardCapacityPercent: 81.2,
+    activeCranes: 14,
+    totalContainersHandled: 18450,
+    quayThroughputTeuHr: 395,
+    leadArchitect: '@deep-00007',
+    leadDeveloper: '@deep5devlopers'
   });
 
   const [vessels, setVessels] = useState([
     { id: 'VES-802', name: 'Ever Golden', eta: '10:45 AM', berth: 'Quay 4A', status: 'Moored', teu: 20100 },
     { id: 'VES-914', name: 'Maersk Mc-Kinney', eta: '01:15 PM', berth: 'Quay 2B', status: 'In Approach', teu: 18270 },
     { id: 'VES-431', name: 'CMA CGM Palais', eta: '04:30 PM', berth: 'Quay 1A', status: 'Scheduled', teu: 15000 },
-    { id: 'VES-229', name: 'Hapag-Lloyd Express', eta: '08:00 PM', berth: 'Quay 3C', status: 'Scheduled', teu: 13500 }
+    { id: 'VES-229', name: 'Hapag-Lloyd Express', eta: '08:00 PM', berth: 'Quay 3C', status: 'Scheduled', teu: 13500 },
+    { id: 'VES-512', name: 'MSC Oscar Horizon', eta: '11:20 PM', berth: 'Quay 5B', status: 'Approaching', teu: 19200 }
   ]);
 
   const [cranes, setCranes] = useState([
     { id: 'STS-01', type: 'Super Post-Panamax', efficiency: '96%', operationalStatus: 'ACTIVE', liftsPerHr: 36 },
     { id: 'STS-02', type: 'Super Post-Panamax', efficiency: '94%', operationalStatus: 'ACTIVE', liftsPerHr: 34 },
-    { id: 'STS-03', type: 'Post-Panamax', efficiency: '89%', operationalStatus: 'CALIBRATING', liftsPerHr: 28 },
-    { id: 'STS-04', type: 'Super Post-Panamax', efficiency: '98%', operationalStatus: 'ACTIVE', liftsPerHr: 38 }
+    { id: 'STS-03', type: 'Post-Panamax', efficiency: '91%', operationalStatus: 'ACTIVE', liftsPerHr: 31 },
+    { id: 'STS-04', type: 'Super Post-Panamax', efficiency: '98%', operationalStatus: 'ACTIVE', liftsPerHr: 38 },
+    { id: 'STS-05', type: 'Super Post-Panamax', efficiency: '95%', operationalStatus: 'ACTIVE', liftsPerHr: 35 }
   ]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setMetrics(prev => ({
         ...prev,
-        quayThroughputTeuHr: Math.floor(330 + Math.random() * 25),
-        totalContainersHandled: prev.totalContainersHandled + Math.floor(Math.random() * 3)
+        totalContainersHandled: prev.totalContainersHandled + Math.floor(Math.random() * 3) + 1,
+        yardCapacityPercent: parseFloat((prev.yardCapacityPercent + (Math.random() * 0.1 - 0.05)).toFixed(1))
       }));
-    }, 4000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="terminal-dashboard-container" style={{ padding: '24px', fontFamily: 'system-ui, -apple-system, sans-serif', backgroundColor: '#0f172a', color: '#f8fafc', minHeight: '100vh' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #334155', paddingBottom: '16px', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '700', color: '#38bdf8' }}>🚢 Maritime Port Terminal Logistics Matrix</h1>
-          <p style={{ margin: '4px 0 0', color: '#94a3b8', fontSize: '14px' }}>Live Quay Operations, Container Yard Telemetry & Vessel Dispatch</p>
-        </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <span style={{ padding: '6px 12px', borderRadius: '4px', background: '#0284c7', color: '#fff', fontSize: '13px', fontWeight: '600' }}>PORT ACTIVE</span>
-          <span style={{ padding: '6px 12px', borderRadius: '4px', background: '#1e293b', border: '1px solid #475569', color: '#94a3b8', fontSize: '13px' }}>ZONE-A BERTH</span>
-        </div>
+    <div className="clox-terminal-dashboard" style={{ fontFamily: 'Inter, system-ui, sans-serif', padding: '24px', background: '#0f172a', color: '#f8fafc', minHeight: '100vh' }}>
+      <header style={{ borderBottom: '1px solid #334155', paddingBottom: '16px', marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', margin: '0 0 8px 0', color: '#38bdf8' }}>
+          🏗️ CLOX Logistical Core - Engineered by @deep-00007 &amp; @deep5devlopers
+        </h1>
+        <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.95rem' }}>
+          Maritime Terminal &amp; Container Stack Telemetry Engine | Lead: @deep-00007 | Dev: @deep5devlopers
+        </p>
       </header>
 
-      {/* KPI Metrics */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div style={{ backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-          <div style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase' }}>Active Vessels In Port</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#38bdf8', marginTop: '6px' }}>{metrics.activeVessels}</div>
+      {/* Metrics Row */}
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '28px' }}>
+        <div style={{ background: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
+          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Live Moored Vessels</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#38bdf8' }}>{metrics.activeVessels}</div>
         </div>
-        <div style={{ backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-          <div style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase' }}>Yard Capacity Utilization</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#f59e0b', marginTop: '6px' }}>{metrics.yardCapacityPercent}%</div>
+        <div style={{ background: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
+          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Yard Stack Capacity</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fbbf24' }}>{metrics.yardCapacityPercent}%</div>
         </div>
-        <div style={{ backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-          <div style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase' }}>STS Quay Cranes Online</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#10b981', marginTop: '6px' }}>{metrics.activeCranes} / 14</div>
+        <div style={{ background: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
+          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Active STS Cranes</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#4ade80' }}>{metrics.activeCranes} Units</div>
         </div>
-        <div style={{ backgroundColor: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
-          <div style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase' }}>Throughput (TEU/hr)</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#818cf8', marginTop: '6px' }}>{metrics.quayThroughputTeuHr}</div>
+        <div style={{ background: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
+          <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>TEU Handled (Shift)</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#a855f7' }}>{metrics.totalContainersHandled.toLocaleString()}</div>
         </div>
-      </div>
+      </section>
 
-      {/* Vessel Schedule Matrix */}
-      <section style={{ backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', padding: '20px', marginBottom: '24px' }}>
-        <h2 style={{ fontSize: '18px', margin: '0 0 16px', color: '#f1f5f9' }}>Vessel Berthing & Arrival Telemetry</h2>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid #334155', color: '#94a3b8' }}>
-              <th style={{ padding: '8px 12px' }}>Call ID</th>
-              <th style={{ padding: '8px 12px' }}>Vessel Name</th>
-              <th style={{ padding: '8px 12px' }}>Target Berth</th>
-              <th style={{ padding: '8px 12px' }}>ETA / Status</th>
-              <th style={{ padding: '8px 12px' }}>Capacity (TEU)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {vessels.map(v => (
-              <tr key={v.id} style={{ borderBottom: '1px solid #334155' }}>
-                <td style={{ padding: '10px 12px', fontFamily: 'monospace', color: '#38bdf8' }}>{v.id}</td>
-                <td style={{ padding: '10px 12px', fontWeight: '600' }}>{v.name}</td>
-                <td style={{ padding: '10px 12px' }}>{v.berth}</td>
-                <td style={{ padding: '10px 12px' }}>
-                  <span style={{
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    fontSize: '12px',
-                    backgroundColor: v.status === 'Moored' ? '#065f46' : v.status === 'In Approach' ? '#1e40af' : '#374151',
-                    color: '#fff'
-                  }}>
-                    {v.status} ({v.eta})
-                  </span>
-                </td>
-                <td style={{ padding: '10px 12px' }}>{v.teu.toLocaleString()}</td>
+      {/* Vessel Tracking Grid */}
+      <section style={{ marginBottom: '28px' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '12px', color: '#e2e8f0' }}>Vessel Berth Arrival Telemetry</h2>
+        <div style={{ overflowX: 'auto', background: '#1e293b', borderRadius: '8px', border: '1px solid #334155' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.9rem' }}>
+            <thead>
+              <tr style={{ background: '#334155', color: '#94a3b8' }}>
+                <th style={{ padding: '12px' }}>Callsign</th>
+                <th style={{ padding: '12px' }}>Vessel Name</th>
+                <th style={{ padding: '12px' }}>ETA / Status</th>
+                <th style={{ padding: '12px' }}>Designated Berth</th>
+                <th style={{ padding: '12px' }}>TEU Capacity</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {vessels.map(v => (
+                <tr key={v.id} style={{ borderBottom: '1px solid #334155' }}>
+                  <td style={{ padding: '12px', fontWeight: '600', color: '#38bdf8' }}>{v.id}</td>
+                  <td style={{ padding: '12px' }}>{v.name}</td>
+                  <td style={{ padding: '12px' }}>
+                    <span style={{ padding: '4px 8px', borderRadius: '4px', background: v.status === 'Moored' ? '#065f46' : '#854d0e', color: '#f8fafc', fontSize: '0.8rem' }}>
+                      {v.status} ({v.eta})
+                    </span>
+                  </td>
+                  <td style={{ padding: '12px' }}>{v.berth}</td>
+                  <td style={{ padding: '12px' }}>{v.teu.toLocaleString()} TEU</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {/* Crane Telemetry */}
-      <section style={{ backgroundColor: '#1e293b', borderRadius: '8px', border: '1px solid #334155', padding: '20px' }}>
-        <h2 style={{ fontSize: '18px', margin: '0 0 16px', color: '#f1f5f9' }}>Active STS Crane Status & Telemetry</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px' }}>
+      <section>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '12px', color: '#e2e8f0' }}>Ship-to-Shore (STS) Crane Status</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
           {cranes.map(crane => (
-            <div key={crane.id} style={{ backgroundColor: '#0f172a', padding: '16px', borderRadius: '6px', border: '1px solid #334155' }}>
+            <div key={crane.id} style={{ background: '#1e293b', padding: '16px', borderRadius: '8px', border: '1px solid #334155' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <strong style={{ color: '#38bdf8' }}>{crane.id}</strong>
-                <span style={{ fontSize: '12px', color: crane.operationalStatus === 'ACTIVE' ? '#10b981' : '#f59e0b' }}>
+                <span style={{ fontWeight: 'bold', color: '#38bdf8' }}>{crane.id}</span>
+                <span style={{ color: '#4ade80', fontSize: '0.8rem', background: '#064e3b', padding: '2px 6px', borderRadius: '4px' }}>
                   {crane.operationalStatus}
                 </span>
               </div>
-              <div style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '4px' }}>Type: {crane.type}</div>
-              <div style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '4px' }}>Cycle Efficiency: <span style={{ color: '#f8fafc' }}>{crane.efficiency}</span></div>
-              <div style={{ fontSize: '13px', color: '#94a3b8' }}>Lifts: <span style={{ color: '#f8fafc' }}>{crane.liftsPerHr} cycles/hr</span></div>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Type: {crane.type}</div>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Speed: {crane.liftsPerHr} lifts/hr</div>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginTop: '4px' }}>Efficiency: {crane.efficiency}</div>
             </div>
           ))}
         </div>
