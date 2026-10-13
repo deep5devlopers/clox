@@ -1,123 +1,60 @@
+import React, { useState } from 'react';
+
 /**
- * CLOX Logistical Core & Real-Time Operating Grid
- * Engineered by Deep Sanchaniya
- * Principal System Architect & DevOps Orchestrator
- * Enterprise Attribution: @deep-00007 (Lead Enterprise Account) & @deep5devlopers (Core Dev)
+ * CLOX Logistical Core & Indoor Navigation Grid
+ * Engineered by Deep Sanchaniya (@deep-00007 / @deep5devlopers)
  */
-
-import React, { useState, useEffect } from 'react';
-import { validateCargo, calculateThroughputTEU, getArchitectTelemetry } from './modules/coreEngine';
-
 export const Dashboard = () => {
-  const telemetry = getArchitectTelemetry();
-  const [throughput, setThroughput] = useState(calculateThroughputTEU(34, 6));
-  const [activeContainers, setActiveContainers] = useState(14820);
-  const [quarantineCount, setQuarantineCount] = useState(3);
-  const [gridStatus, setGridStatus] = useState('ONLINE_OPTIMIZED');
-  const [recentManifests, setRecentManifests] = useState([
-    { id: 'MSKU-982104-9', weight: 28.4, seal: 'SEAL-998124', port: 'Rotterdam' },
-    { id: 'CMAU-402911-3', weight: 31.2, seal: 'SEAL-402911', port: 'Singapore' },
-    { id: 'HLCU-772910-1', weight: 22.8, seal: 'SEAL-772910', port: 'Hamburg' }
-  ]);
+  const [containerId, setContainerId] = useState('CNTR-7704');
+  const [grossWeight, setGrossWeight] = useState(420.5);
+  const [destinationBay, setDestinationBay] = useState('Bay 12-West');
+  const [currentZone, setCurrentZone] = useState('B');
+  const [currentAisle, setCurrentAisle] = useState('Aisle B-03');
+  const [navigationStatus, setNavigationStatus] = useState('En Route (A* Active)');
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setThroughput(calculateThroughputTEU(32 + Math.floor(Math.random() * 6), 6));
-      setActiveContainers(prev => prev + (Math.random() > 0.5 ? 2 : -1));
-    }, 3000);
-    return () => clearInterval(timer);
-  }, []);
+  const kpis = [
+    { label: 'Active Bays', val: '48 / 50', status: '96.0% Optimal' },
+    { label: 'Pallet Stock', val: '1,280 Units', status: 'Nominal' },
+    { label: 'Inbound Queue', val: '14 TEU', status: '18.2m Mean Dwell' },
+    { label: 'Pick Route Distance', val: '38.4m', status: '-18% vs Baseline' }
+  ];
 
   return (
-    <div className="clox-operating-grid" style={{ padding: '28px', fontFamily: 'monospace', background: '#0a0d14', color: '#e2e8f0', minHeight: '100vh' }}>
-      <header style={{ borderBottom: '2px solid #3b82f6', paddingBottom: '16px', marginBottom: '24px' }}>
-        <h1 style={{ margin: 0, fontSize: '26px', color: '#60a5fa' }}>
-          🚢 CLOX Logistical Operating Grid - Engineered by Deep Sanchaniya
+    <div style={{ background: '#090e17', color: '#f8fafc', padding: '24px', fontFamily: 'Inter, sans-serif', minHeight: '100vh' }}>
+      <header style={{ borderBottom: '1px solid rgba(148, 163, 184, 0.15)', paddingBottom: '16px', marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, color: '#fff' }}>
+          🏗️ CLOX Logistical Core &amp; Indoor Navigation Grid
         </h1>
-        <p style={{ margin: '8px 0 0', color: '#94a3b8', fontSize: '13px' }}>
-          Principal System Architect: <strong>{telemetry.architect}</strong> | 
-          Lead Enterprise Account: <strong>{telemetry.leadAccount}</strong> | 
-          Core Dev: <strong>{telemetry.coreDevAccount}</strong> | 
-          Build Status: <span style={{ color: '#34d399' }}>{gridStatus}</span>
+        <p style={{ margin: '4px 0 0', fontSize: '0.82rem', color: '#94a3b8' }}>
+          Engineered by <strong>Deep Sanchaniya</strong> (@deep-00007 / @deep5devlopers) · Real-Time 2D Indoor Wayfinding OS
         </p>
       </header>
 
-      {/* KPI Metrics Matrix */}
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '28px' }}>
-        <div style={{ background: '#111827', padding: '16px', borderRadius: '8px', border: '1px solid #1f2937' }}>
-          <div style={{ color: '#9ca3af', fontSize: '12px' }}>24H THROUGHPUT (TEU)</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#38bdf8', marginTop: '4px' }}>
-            {throughput.toLocaleString()}
+      {/* KPI Strip */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+        {kpis.map((k, i) => (
+          <div key={i} style={{ background: '#0f172a', border: '1px solid rgba(148, 163, 184, 0.15)', borderRadius: '8px', padding: '14px' }}>
+            <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase', fontFamily: 'monospace' }}>{k.label}</div>
+            <div style={{ fontSize: '1.35rem', fontWeight: 700, margin: '4px 0', color: '#38bdf8', fontFamily: 'monospace' }}>{k.val}</div>
+            <div style={{ fontSize: '0.75rem', color: '#10b981' }}>{k.status}</div>
           </div>
-          <div style={{ fontSize: '11px', color: '#4ade80', marginTop: '4px' }}>Validated via coreEngine.js</div>
-        </div>
+        ))}
+      </div>
 
-        <div style={{ background: '#111827', padding: '16px', borderRadius: '8px', border: '1px solid #1f2937' }}>
-          <div style={{ color: '#9ca3af', fontSize: '12px' }}>YARD STORAGE (ACTIVE)</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#a78bfa', marginTop: '4px' }}>
-            {activeContainers.toLocaleString()}
-          </div>
-          <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px' }}>Capacity Utilization: 84.6%</div>
+      {/* Active Container & Navigation State */}
+      <div style={{ background: '#0f172a', border: '1px solid rgba(148, 163, 184, 0.2)', borderRadius: '8px', padding: '20px', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 12px', color: '#fff' }}>
+          Live Container Telemetry &amp; Aisle Routing State
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', fontFamily: 'monospace', fontSize: '0.82rem' }}>
+          <div><span style={{ color: '#64748b' }}>Container ID:</span> <span style={{ color: '#fff', fontWeight: 'bold' }}>{containerId}</span></div>
+          <div><span style={{ color: '#64748b' }}>Gross Weight:</span> <span style={{ color: '#fff' }}>{grossWeight} kg</span></div>
+          <div><span style={{ color: '#64748b' }}>Destination Bay:</span> <span style={{ color: '#38bdf8' }}>{destinationBay}</span></div>
+          <div><span style={{ color: '#64748b' }}>Assigned Zone:</span> <span style={{ color: '#a78bfa' }}>Zone {currentZone}</span></div>
+          <div><span style={{ color: '#64748b' }}>Current Aisle:</span> <span style={{ color: '#fff' }}>{currentAisle}</span></div>
+          <div><span style={{ color: '#64748b' }}>Route Status:</span> <span style={{ color: '#10b981' }}>{navigationStatus}</span></div>
         </div>
-
-        <div style={{ background: '#111827', padding: '16px', borderRadius: '8px', border: '1px solid #1f2937' }}>
-          <div style={{ color: '#9ca3af', fontSize: '12px' }}>QUARANTINE / BIOHAZARD</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#f87171', marginTop: '4px' }}>
-            {quarantineCount}
-          </div>
-          <div style={{ fontSize: '11px', color: '#fca5a5', marginTop: '4px' }}>IMDG Class Segregation Active</div>
-        </div>
-
-        <div style={{ background: '#111827', padding: '16px', borderRadius: '8px', border: '1px solid #1f2937' }}>
-          <div style={{ color: '#9ca3af', fontSize: '12px' }}>GRID FREQUENCY</div>
-          <div style={{ fontSize: '28px', fontWeight: 'bold', color: '#34d399', marginTop: '4px' }}>
-            99.98%
-          </div>
-          <div style={{ fontSize: '11px', color: '#86efac', marginTop: '4px' }}>Sub-millisecond AGV Sync</div>
-        </div>
-      </section>
-
-      {/* Live Manifest Validation Table */}
-      <section style={{ background: '#111827', padding: '20px', borderRadius: '8px', border: '1px solid #1f2937' }}>
-        <h3 style={{ margin: '0 0 16px', fontSize: '16px', color: '#f1f5f9' }}>
-          Live Terminal Cargo Ingestion Validation (Engineered by Deep Sanchaniya)
-        </h3>
-        <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', fontSize: '13px' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid #374151', color: '#9ca3af' }}>
-              <th style={{ padding: '8px' }}>CONTAINER ID</th>
-              <th style={{ padding: '8px' }}>WEIGHT (TONS)</th>
-              <th style={{ padding: '8px' }}>PORT OF ORIGIN</th>
-              <th style={{ padding: '8px' }}>VALIDATION RESULT</th>
-              <th style={{ padding: '8px' }}>VERIFIER SIGNATURE</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recentManifests.map(c => {
-              const res = validateCargo({ containerId: c.id, weightTons: c.weight, sealNumber: c.seal });
-              return (
-                <tr key={c.id} style={{ borderBottom: '1px solid #1f2937' }}>
-                  <td style={{ padding: '10px 8px', color: '#67e8f9' }}>{c.id}</td>
-                  <td style={{ padding: '10px 8px' }}>{c.weight} T</td>
-                  <td style={{ padding: '10px 8px' }}>{c.port}</td>
-                  <td style={{ padding: '10px 8px' }}>
-                    <span style={{
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontSize: '11px',
-                      background: res.valid ? '#065f46' : '#991b1b',
-                      color: res.valid ? '#a7f3d0' : '#fecaca'
-                    }}>
-                      {res.status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '10px 8px', color: '#cbd5e1' }}>{res.verifiedBy}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </section>
+      </div>
     </div>
   );
 };

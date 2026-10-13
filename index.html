@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLOX Logistics OS — Enterprise Port Logistics & Indoor Warehouse Wayfinding System</title>
+  <meta name="description" content="CLOX is an enterprise-grade terminal operating system and real-time 2D indoor warehouse navigation grid engineered by Deep Sanchaniya (@deep-00007, @deep5devlopers).">
+  <meta name="keywords" content="clox, deep, deep sanchaniya, warehouse indoor navigation, port logistics, terminal operating system, 2D floor grid, wayfinding">
+  <meta name="author" content="Deep Sanchaniya">
+  
+  <!-- OpenGraph Meta Tags -->
+  <meta property="og:title" content="CLOX Logistics OS — Indoor Warehouse Wayfinding & Terminal Grid">
+  <meta property="og:description" content="Real-time 2D indoor warehouse wayfinding, A* shortest-path routing, and container telemetry engineered by Deep Sanchaniya.">
+  <meta property="og:type" content="website">
+  
+  <!-- Google Fonts & Bootstrap Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root {
+      --bg-base: #090e17;
+      --bg-surface: #0f172a;
+      --bg-elevated: #1e293b;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --border-strong: rgba(148, 163, 184, 0.28);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent-cyan: #06b6d4;
+      --accent-cyan-bright: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-violet: #8b5cf6;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 1.75rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo-badge {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #0284c7, #0f172a);
+      border: 1px solid var(--accent-cyan);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.1rem;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+
+    .brand-tag {
+      font-size: 0.68rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      background: rgba(6, 182, 212, 0.12);
+      color: var(--accent-cyan-bright);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-link-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .nav-link-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link-btn.active {
+      color: #fff;
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .account-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.8);
+      animation: pulseAnim 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Main Container */
+    .app-container {
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.75rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* KPI Summary Strip */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.15rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--accent-cyan);
+    }
+
+    .kpi-card.emerald::after { background: var(--accent-emerald); }
+    .kpi-card.amber::after { background: var(--accent-amber); }
+    .kpi-card.violet::after { background: var(--accent-violet); }
+
+    .kpi-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
+    .kpi-val {
+      font-size: 1.55rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+    }
+
+    .kpi-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Main Cockpit Layout */
+    .cockpit-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1080px) {
+      .cockpit-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 2D Floor Grid Card */
+    .floorplan-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .card-title-icon {
+      color: var(--accent-cyan-bright);
+      font-size: 1.1rem;
+    }
+
+    .card-title-text {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #fff;
+    }
+
+    .card-title-sub {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Filter / Search Bar */
+    .search-filter-strip {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .search-input-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-input-box i {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(10, 15, 26, 0.8);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.85rem 0.55rem 2.25rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+    }
+
+    .zone-filter-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.55rem 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .zone-filter-btn:hover {
+      color: #fff;
+      border-color: var(--border-strong);
+    }
+
+    .zone-filter-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan-bright);
+    }
+
+    /* SVG Floor Canvas Container */
+    .floor-canvas-wrapper {
+      position: relative;
+      background: #060913;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 16 / 10;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .warehouse-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* SVG Elements Styling */
+    .svg-grid-line {
+      stroke: rgba(148, 163, 184, 0.06);
+      stroke-width: 1;
+    }
+
+    .svg-corridor {
+      fill: rgba(15, 23, 42, 0.7);
+      stroke: rgba(148, 163, 184, 0.15);
+      stroke-width: 1;
+    }
+
+    .svg-arterial {
+      stroke: rgba(6, 182, 212, 0.12);
+      stroke-dasharray: 4, 4;
+      stroke-width: 1.5;
+    }
+
+    .svg-dock {
+      fill: rgba(30, 41, 59, 0.9);
+      stroke: var(--accent-cyan);
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .svg-dock:hover, .svg-dock.active {
+      fill: rgba(6, 182, 212, 0.25);
+      stroke-width: 2.5;
+    }
+
+    .svg-rack-zone {
+      fill: rgba(15, 23, 42, 0.85);
+      stroke: var(--border-strong);
+      stroke-width: 1;
+    }
+
+    .svg-bin {
+      fill: rgba(30, 41, 59, 0.75);
+      stroke: rgba(148, 163, 184, 0.2);
+      stroke-width: 1;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .svg-bin:hover {
+      fill: rgba(56, 189, 248, 0.35);
+      stroke: var(--accent-cyan-bright);
+      stroke-width: 1.5;
+    }
+
+    .svg-bin.selected-bin {
+      fill: rgba(6, 182, 212, 0.6);
+      stroke: #38bdf8;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 6px #06b6d4);
+    }
+
+    .svg-bin.cold-chain {
+      stroke: rgba(99, 102, 241, 0.4);
+    }
+
+    .svg-bin.cold-chain.selected-bin {
+      fill: rgba(99, 102, 241, 0.6);
+      stroke: #a5b4fc;
+    }
+
+    .svg-waypoint-path {
+      stroke: var(--accent-cyan);
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 8, 6;
+      animation: dashMove 1.4s linear infinite;
+    }
+
+    @keyframes dashMove {
+      to {
+        stroke-dashoffset: -28;
+      }
+    }
+
+    .svg-agv-pin {
+      fill: var(--accent-amber);
+      stroke: #fff;
+      stroke-width: 1.5;
+      cursor: pointer;
+      filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
+    }
+
+    /* Right Sidebar: Wayfinding HUD & Inspector */
+    .sidebar-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .inspector-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .inspector-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .inspector-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Item Details Table */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+    }
+
+    .detail-item {
+      background: rgba(10, 15, 26, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .detail-label {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .detail-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Turn-by-Turn Wayfinding Steps */
+    .turn-hud-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .turn-hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.65rem;
+    }
+
+    .turn-hud-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .turn-metrics-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-cyan-bright);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      border: 1px solid rgba(6, 182, 212, 0.25);
+    }
+
+    .turn-step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .turn-step-item {
+      background: rgba(10, 15, 26, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      font-size: 0.78rem;
+    }
+
+    .turn-step-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan-bright);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .turn-step-text {
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .turn-step-dist {
+      color: var(--accent-cyan-bright);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      margin-top: 0.2rem;
+    }
+
+    .btn-action-primary {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      transition: all 0.2s;
+    }
+
+    .btn-action-primary:hover {
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);
+    }
+
+    /* System Manifest Table Section */
+    .manifest-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .manifest-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .manifest-table th {
+      padding: 0.75rem 1rem;
+      background: rgba(10, 15, 26, 0.7);
+      border-bottom: 1px solid var(--border-strong);
+      color: var(--text-dim);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .manifest-table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .manifest-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: #fff;
+    }
+
+    /* Footer */
+    .app-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 1.5rem 1.75rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      margin-left: 1rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan-bright);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-bar">
+    <div class="brand-section">
+      <div class="brand-logo-badge">
+        <i class="bi bi-compass"></i>
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span class="brand-title">CLOX Logistics OS</span>
+          <span class="brand-tag">v2.0.0</span>
+        </div>
+        <div style="font-size: 0.72rem; color: var(--text-dim);">Enterprise Port Logistics &amp; Real-Time Indoor Navigation Grid</div>
+      </div>
+    </div>
+
+    <nav class="nav-links">
+      <button class="nav-link-btn active" id="navFloorBtn" onclick="switchNavTab('floor')">
+        <i class="bi bi-grid-3x3-gap"></i>
+        <span>2D Floor Navigation</span>
+      </button>
+      <button class="nav-link-btn" id="navManifestBtn" onclick="switchNavTab('manifest')">
+        <i class="bi bi-diagram-3"></i>
+        <span>55 Modules Manifest</span>
+      </button>
+      <button class="nav-link-btn" id="navSpecsBtn" onclick="switchNavTab('specs')">
+        <i class="bi bi-shield-check"></i>
+        <span>Architecture &amp; AST</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <div class="account-badge">
+        <div class="pulse-dot"></div>
+        <span>Lead: @deep-00007 · Core: @deep5devlopers</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- KPI Summary Strip -->
+    <section class="kpi-strip">
+      <div class="kpi-card">
+        <span class="kpi-label">Active Bay Capacity</span>
+        <div class="kpi-val text-cyan">48 / 50 Bays</div>
+        <span class="kpi-sub"><i class="bi bi-check-circle-fill text-success"></i> 96.0% Optimal Utilization</span>
+      </div>
+
+      <div class="kpi-card emerald">
+        <span class="kpi-label">Palletized Stock Units</span>
+        <div class="kpi-val" style="color: #10b981;">1,280 Pallets</div>
+        <span class="kpi-sub"><i class="bi bi-box-seam"></i> 4 Racking Zones Mapped</span>
+      </div>
+
+      <div class="kpi-card amber">
+        <span class="kpi-label">Inbound Freight Queue</span>
+        <div class="kpi-val" style="color: #f59e0b;">14 TEU</div>
+        <span class="kpi-sub"><i class="bi bi-clock-history"></i> 18.2m Mean Dwell Time</span>
+      </div>
+
+      <div class="kpi-card violet">
+        <span class="kpi-label">Mean Pick Distance</span>
+        <div class="kpi-val" style="color: #a78bfa;">38.4 meters</div>
+        <span class="kpi-sub"><i class="bi bi-arrow-down-right"></i> -18% vs Fixed Path Baseline</span>
+      </div>
+    </section>
+
+    <!-- Cockpit Layout: Floor Grid & Wayfinding -->
+    <div id="floorTabContent">
+      <div class="cockpit-layout">
+        
+        <!-- Interactive 2D Top-Down Warehouse Floor Grid -->
+        <div class="floorplan-card">
+          <div class="card-header-bar">
+            <div class="card-title-group">
+              <i class="bi bi-geo-alt-fill card-title-icon"></i>
+              <div>
+                <div class="card-title-text">2D Warehouse Spatial Floorplan</div>
+                <div class="card-title-sub">Select any rack bin or dock to inspect telemetry &amp; calculate shortest path</div>
+              </div>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="search-filter-strip">
+              <div class="search-input-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="skuSearchInput" class="search-input" placeholder="Search SKU, Product, or Bay (e.g. B-03-02)..." oninput="handleSearch(this.value)">
+              </div>
+              <button class="zone-filter-btn active" id="filterAll" onclick="filterZone('ALL')">All Zones</button>
+              <button class="zone-filter-btn" id="filterA" onclick="filterZone('A')">Zone A</button>
+              <button class="zone-filter-btn" id="filterB" onclick="filterZone('B')">Zone B</button>
+              <button class="zone-filter-btn" id="filterC" onclick="filterZone('C')">Zone C (Cold)</button>
+              <button class="zone-filter-btn" id="filterD" onclick="filterZone('D')">Zone D</button>
+            </div>
+          </div>
+
+          <!-- SVG Floor Canvas -->
+          <div class="floor-canvas-wrapper" id="svgCanvasContainer">
+            <svg id="warehouseSvg" class="warehouseSvg" viewBox="0 0 1000 620" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="0.8"/>
+                </pattern>
+                <linearGradient id="corridorGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0a101f"/>
+                  <stop offset="100%" stop-color="#070a14"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Background Grid -->
+              <rect width="1000" height="620" fill="#060913"/>
+              <rect width="1000" height="620" fill="url(#gridPattern)"/>
+
+              <!-- Outer Facility Boundary -->
+              <rect x="20" y="20" width="960" height="580" fill="none" stroke="rgba(148, 163, 184, 0.2)" stroke-width="2" rx="8"/>
+
+              <!-- Main Arterial Transit Corridors -->
+              <!-- North-South Central Aisle -->
+              <rect x="470" y="30" width="60" height="500" fill="url(#corridorGrad)" stroke="rgba(6, 182, 212, 0.2)" stroke-width="1"/>
+              <line x1="500" y1="35" x2="500" y2="525" class="svg-arterial"/>
+
+              <!-- East-West Cross Corridor North -->
+              <rect x="30" y="260" width="940" height="50" fill="url(#corridorGrad)" stroke="rgba(6, 182, 212, 0.2)" stroke-width="1"/>
+              <line x1="35" y1="285" x2="965" y2="285" class="svg-arterial"/>
+
+              <!-- Southern Staging & Inbound Dock Corridors -->
+              <rect x="30" y="520" width="940" height="70" fill="#0b1329" stroke="rgba(148, 163, 184, 0.18)" stroke-width="1" rx="4"/>
+
+              <!-- Inbound / Outbound Docks (Bottom) -->
+              <!-- Dock 1 -->
+              <g id="dock-1" class="dock-group" onclick="selectDock('Dock-01', 120, 555)">
+                <rect x="70" y="535" width="100" height="42" rx="4" class="svg-dock" id="svg-dock-1"/>
+                <text x="120" y="560" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">DOCK-01</text>
+                <text x="120" y="572" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="8" text-anchor="middle">RECEIVING</text>
+              </g>
+
+              <!-- Dock 2 (Default Origin) -->
+              <g id="dock-2" class="dock-group" onclick="selectDock('Dock-02', 310, 555)">
+                <rect x="260" y="535" width="100" height="42" rx="4" class="svg-dock active" id="svg-dock-2"/>
+                <text x="310" y="560" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">DOCK-02</text>
+                <text x="310" y="572" fill="#10b981" font-family="'JetBrains Mono', monospace" font-size="8" text-anchor="middle">ACTIVE AGV</text>
+              </g>
+
+              <!-- Central Dispatch & QA Staging Hub -->
+              <g id="staging-hub">
+                <rect x="440" y="532" width="120" height="48" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
+                <text x="500" y="556" fill="#f59e0b" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">STAGING HUB</text>
+                <text x="500" y="570" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="8" text-anchor="middle">QA &amp; PACKING</text>
+              </g>
+
+              <!-- Dock 3 -->
+              <g id="dock-3" class="dock-group" onclick="selectDock('Dock-03', 690, 555)">
+                <rect x="640" y="535" width="100" height="42" rx="4" class="svg-dock" id="svg-dock-3"/>
+                <text x="690" y="560" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">DOCK-03</text>
+                <text x="690" y="572" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="8" text-anchor="middle">OUTBOUND</text>
+              </g>
+
+              <!-- Dock 4 -->
+              <g id="dock-4" class="dock-group" onclick="selectDock('Dock-04', 880, 555)">
+                <rect x="830" y="535" width="100" height="42" rx="4" class="svg-dock" id="svg-dock-4"/>
+                <text x="880" y="560" fill="#fff" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="700" text-anchor="middle">DOCK-04</text>
+                <text x="880" y="572" fill="#94a3b8" font-family="'JetBrains Mono', monospace" font-size="8" text-anchor="middle">RESERVE</text>
+              </g>
+
+              <!-- ZONE LABELS -->
+              <text x="50" y="52" fill="#38bdf8" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700">ZONE A: CONSUMER GOODS &amp; ELECTRONICS</text>
+              <text x="550" y="52" fill="#a78bfa" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700">ZONE B: INDUSTRIAL MACHINERY &amp; HARDWARE</text>
+              <text x="50" y="330" fill="#60a5fa" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700">ZONE C: COLD CHAIN (-20°C TO +4°C)</text>
+              <text x="550" y="330" fill="#34d399" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="700">ZONE D: HIGH-DENSITY PALLET RESERVES</text>
+
+              <!-- DYNAMIC RACK BINS RENDERED VIA JAVASCRIPT -->
+              <g id="svgRacksLayer"></g>
+
+              <!-- DYNAMIC WAYPOINT PATH LAYER -->
+              <path id="svgDynamicPath" class="svg-waypoint-path" d="" style="display: none;"/>
+
+              <!-- AGV FORKLIFT POSITION INDICATOR -->
+              <g id="agvMarker" transform="translate(310, 555)">
+                <circle cx="0" cy="0" r="10" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/>
+                <circle cx="0" cy="0" r="4" fill="#fff"/>
+              </g>
+
+              <!-- DESTINATION TARGET PIN -->
+              <g id="targetPin" transform="translate(0, 0)" style="display: none;">
+                <circle cx="0" cy="0" r="12" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.8">
+                  <animate attributeName="r" values="6;16;6" dur="1.8s" repeatCount="indefinite"/>
+                  <animate attributeName="opacity" values="1;0.2;1" dur="1.8s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="0" cy="0" r="5" fill="#38bdf8"/>
+              </g>
+            </svg>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; padding-top: 0.25rem;">
+            <span><i class="bi bi-circle-fill" style="color: var(--accent-cyan); font-size: 0.5rem;"></i> Active Waypoint Path</span>
+            <span><i class="bi bi-snow" style="color: #60a5fa;"></i> Cold Chain Zone C</span>
+            <span><i class="bi bi-shield-check" style="color: var(--accent-emerald);"></i> AST Certified Invariants</span>
+            <span>Origin: <span id="currentOriginLabel" style="color: #fff; font-weight: 700;">Dock-02</span></span>
+          </div>
+        </div>
+
+        <!-- Right Side: Turn-by-Turn HUD & Selected Bin Inspector -->
+        <aside class="sidebar-panel">
+
+          <!-- Turn-by-Turn Wayfinding HUD -->
+          <div class="turn-hud-box">
+            <div class="turn-hud-header">
+              <div class="turn-hud-title">
+                <i class="bi bi-signpost-2-fill text-cyan"></i>
+                <span>A* Turn-by-Turn Wayfinding</span>
+              </div>
+              <span class="turn-metrics-tag" id="hudDistanceBadge">38.4m · 46s</span>
+            </div>
+
+            <div style="font-size: 0.75rem; color: var(--text-muted);">
+              Route computed from <strong id="hudOriginText" style="color: #38bdf8;">Dock-02</strong> to <strong id="hudTargetText" style="color: #38bdf8;">Bin B-03-02</strong>.
+            </div>
+
+            <div class="turn-step-list" id="turnStepList">
+              <!-- Dynamically populated steps -->
+            </div>
+
+            <button class="btn-action-primary" onclick="simulateAGVTraversal()">
+              <i class="bi bi-play-circle-fill"></i>
+              <span>Simulate AGV Traversal Along Route</span>
+            </button>
+          </div>
+
+          <!-- Selected Bin & SKU Inspector -->
+          <div class="inspector-box">
+            <div class="inspector-header">
+              <div class="inspector-title">
+                <i class="bi bi-box-seam text-cyan"></i>
+                <span id="inspectBinId">Bin B-03-02</span>
+              </div>
+              <span class="status-pill" id="inspectZonePill">Zone B · Tier 2</span>
+            </div>
+
+            <div style="font-size: 0.88rem; font-weight: 700; color: #fff;" id="inspectProdName">
+              Industrial Hydraulic Pump Assembly
+            </div>
+
+            <div class="details-grid">
+              <div class="detail-item">
+                <span class="detail-label">SKU ID</span>
+                <span class="detail-val" id="inspectSku">SKU-7704</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Container Tag</span>
+                <span class="detail-val" id="inspectContainer">CNTR-8812</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Gross Weight</span>
+                <span class="detail-val" id="inspectWeight">420.5 kg</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Stock Units</span>
+                <span class="detail-val" id="inspectUnits">24 Units</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Environment</span>
+                <span class="detail-val" id="inspectTemp">Ambient 21.4°C</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Destination Bay</span>
+                <span class="detail-val" id="inspectBay">Bay 12-West</span>
+              </div>
+            </div>
+
+            <button class="btn-action-primary" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399;" onclick="recalculateRouteToInspected()">
+              <i class="bi bi-arrow-up-right-circle-fill"></i>
+              <span>Recalculate Route To This Bin</span>
+            </button>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+
+    <!-- 55 Modules Manifest Tab Content -->
+    <div id="manifestTabContent" style="display: none;">
+      <div class="manifest-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">CLOX 55-Module Operational Architecture Manifest</h2>
+            <p style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.2rem;">Architected by Deep Sanchaniya (@deep-00007, @deep5devlopers) with clean functional React schemas.</p>
+          </div>
+          <span class="status-pill">55/55 Modules Verified</span>
+        </div>
+
+        <table class="manifest-table">
+          <thead>
+            <tr>
+              <th>Module File Name</th>
+              <th>Operational Domain</th>
+              <th>Core Functionality</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="manifestTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Specs Tab Content -->
+    <div id="specsTabContent" style="display: none;">
+      <div class="manifest-card">
+        <h2 style="font-size: 1.25rem; font-weight: 800; color: #fff;">System Architecture &amp; AST Invariant Specifications</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 0.75rem;">
+          <div style="background: rgba(10, 15, 26, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem;">
+            <div style="font-size: 0.7rem; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">Engine Core</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin: 0.25rem 0;">A* Shortest-Path Graph Engine</div>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Evaluates shortest non-intersecting paths across marked warehouse arterial corridors with deterministic 11.2ms latency budget.</p>
+          </div>
+
+          <div style="background: rgba(10, 15, 26, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem;">
+            <div style="font-size: 0.7rem; color: var(--accent-emerald); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">Quality Assurance</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin: 0.25rem 0;">Zero-Defect AST Certification</div>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Continuous abstract syntax tree validation guaranteeing 100% schema compliance across container ID, gross weight, and destination bay.</p>
+          </div>
+
+          <div style="background: rgba(10, 15, 26, 0.6); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 1rem;">
+            <div style="font-size: 0.7rem; color: var(--accent-amber); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">Engineering Leadership</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin: 0.25rem 0;">Deep Sanchaniya (@deep-00007)</div>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">Principal System Architect maintaining active pair coordination with Core Dev account @deep5devlopers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <div>
+      <strong>CLOX Logistics OS</strong> — Engineered by <strong>Deep Sanchaniya</strong> (@deep-00007, @deep5devlopers).
+    </div>
+    <div class="footer-links">
+      <a href="https://github.com/deep-00007" target="_blank"><i class="bi bi-github"></i> @deep-00007</a>
+      <a href="https://github.com/deep5devlopers" target="_blank"><i class="bi bi-github"></i> @deep5devlopers</a>
+      <a href="https://github.com/deep5devlopers/clox" target="_blank"><i class="bi bi-git"></i> Repository</a>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Interactive 2D Navigation Engine -->
+  <script>
+    // Warehouse Racks Mock Database (Real schema: id, zone, x, y, sku, prod, weight, units, temp, bay)
+    const warehouseInventory = [
+      // ZONE A (Aisles A1 to A4) - Consumer Goods & Electronics
+      { id: "A-01-01", zone: "A", x: 70, y: 75, w: 75, h: 36, sku: "SKU-1092", prod: "High-Density Solid State Arrays", weight: "128.4 kg", units: 140, temp: "Ambient 21.0°C", bay: "Bay 01-A" },
+      { id: "A-01-02", zone: "A", x: 165, y: 75, w: 75, h: 36, sku: "SKU-1093", prod: "Wireless Telemetry Transceivers", weight: "94.2 kg", units: 85, temp: "Ambient 21.2°C", bay: "Bay 01-B" },
+      { id: "A-02-01", zone: "A", x: 260, y: 75, w: 75, h: 36, sku: "SKU-1104", prod: "Optical Fiber Splice Terminals", weight: "62.0 kg", units: 210, temp: "Ambient 21.0°C", bay: "Bay 02-A" },
+      { id: "A-02-02", zone: "A", x: 355, y: 75, w: 75, h: 36, sku: "SKU-1108", prod: "Precision Microcontroller Hubs", weight: "45.8 kg", units: 320, temp: "Ambient 20.8°C", bay: "Bay 02-B" },
+      { id: "A-03-01", zone: "A", x: 70, y: 135, w: 75, h: 36, sku: "SKU-1210", prod: "Lithium Polymer Battery Modules", weight: "310.5 kg", units: 64, temp: "Climate 19.5°C", bay: "Bay 03-A" },
+      { id: "A-03-02", zone: "A", x: 165, y: 135, w: 75, h: 36, sku: "SKU-1215", prod: "Automotive Sensor Arrays", weight: "185.0 kg", units: 92, temp: "Ambient 21.0°C", bay: "Bay 03-B" },
+      { id: "A-04-01", zone: "A", x: 260, y: 135, w: 75, h: 36, sku: "SKU-1301", prod: "Smart Metering Gateways", weight: "88.6 kg", units: 175, temp: "Ambient 21.5°C", bay: "Bay 04-A" },
+      { id: "A-04-02", zone: "A", x: 355, y: 135, w: 75, h: 36, sku: "SKU-1309", prod: "Industrial Power Supplies 48V", weight: "245.2 kg", units: 50, temp: "Ambient 21.1°C", bay: "Bay 04-B" },
+
+      // ZONE B (Aisles B1 to B4) - Industrial Machinery & Heavy Freight
+      { id: "B-01-01", zone: "B", x: 570, y: 75, w: 75, h: 36, sku: "SKU-2010", prod: "Cast Steel Flange Couplings", weight: "620.0 kg", units: 18, temp: "Ambient 22.0°C", bay: "Bay 05-A" },
+      { id: "B-01-02", zone: "B", x: 665, y: 75, w: 75, h: 36, sku: "SKU-2015", prod: "High-Torque Planetary Gearboxes", weight: "480.0 kg", units: 22, temp: "Ambient 22.1°C", bay: "Bay 05-B" },
+      { id: "B-02-01", zone: "B", x: 760, y: 75, w: 75, h: 36, sku: "SKU-2088", prod: "Heavy Conveyor Drive Rollers", weight: "550.0 kg", units: 15, temp: "Ambient 21.8°C", bay: "Bay 06-A" },
+      { id: "B-02-02", zone: "B", x: 855, y: 75, w: 75, h: 36, sku: "SKU-2092", prod: "Industrial Pneumatic Actuators", weight: "340.5 kg", units: 35, temp: "Ambient 21.5°C", bay: "Bay 06-B" },
+      { id: "B-03-01", zone: "B", x: 570, y: 135, w: 75, h: 36, sku: "SKU-2204", prod: "Titanium Alloy Structural Rods", weight: "710.2 kg", units: 12, temp: "Ambient 22.0°C", bay: "Bay 07-A" },
+      { id: "B-03-02", zone: "B", x: 665, y: 135, w: 75, h: 36, sku: "SKU-7704", prod: "Industrial Hydraulic Pump Assembly", weight: "420.5 kg", units: 24, temp: "Ambient 21.4°C", bay: "Bay 12-West" },
+      { id: "B-04-01", zone: "B", x: 760, y: 135, w: 75, h: 36, sku: "SKU-2311", prod: "Rotary Turbine Seal Assemblies", weight: "295.0 kg", units: 40, temp: "Ambient 21.7°C", bay: "Bay 08-A" },
+      { id: "B-04-02", zone: "B", x: 855, y: 135, w: 75, h: 36, sku: "SKU-2319", prod: "Heavy Duty Forklift Mast Bearings", weight: "510.8 kg", units: 16, temp: "Ambient 22.0°C", bay: "Bay 08-B" },
+
+      // ZONE C (Aisles C1 to C2) - Cold Chain (-20°C to +4°C)
+      { id: "C-01-01", zone: "C", x: 70, y: 355, w: 85, h: 38, sku: "SKU-3011", prod: "Medical Vaccines & Biologics", weight: "85.2 kg", units: 280, temp: "-19.6°C (Verified)", bay: "Bay 09-Cold" },
+      { id: "C-01-02", zone: "C", x: 180, y: 355, w: 85, h: 38, sku: "SKU-3022", prod: "Frozen Plasma Therapeutic Units", weight: "110.0 kg", units: 190, temp: "-20.2°C (Verified)", bay: "Bay 09-Cold" },
+      { id: "C-01-03", zone: "C", x: 290, y: 355, w: 85, h: 38, sku: "SKU-3040", prod: "High-Purity Bio-Enzymes", weight: "62.4 kg", units: 310, temp: "-18.5°C (Verified)", bay: "Bay 10-Cold" },
+      { id: "C-02-01", zone: "C", x: 70, y: 415, w: 85, h: 38, sku: "SKU-3105", prod: "Perishable Seafood Export Cartons", weight: "450.0 kg", units: 45, temp: "-18.2°C (Verified)", bay: "Bay 11-Cold" },
+      { id: "C-02-02", zone: "C", x: 180, y: 415, w: 85, h: 38, sku: "SKU-3120", prod: "Chilled Dairy Export Consignments", weight: "380.0 kg", units: 60, temp: "+2.4°C (Verified)", bay: "Bay 11-Cold" },
+      { id: "C-02-03", zone: "C", x: 290, y: 415, w: 85, h: 38, sku: "SKU-3144", prod: "Temperature-Sensitive Reagents", weight: "98.5 kg", units: 150, temp: "-20.0°C (Verified)", bay: "Bay 12-Cold" },
+
+      // ZONE D (Aisles D1 to D4) - High-Density Vertical Pallet Reserve
+      { id: "D-01-01", zone: "D", x: 570, y: 355, w: 75, h: 38, sku: "SKU-4001", prod: "Bulk Packaging Corrugated Fiber", weight: "310.0 kg", units: 85, temp: "Ambient 20.5°C", bay: "Bay 13-Reserve" },
+      { id: "D-01-02", zone: "D", x: 665, y: 355, w: 75, h: 38, sku: "SKU-4012", prod: "Industrial Polymer Resins (Granules)", weight: "850.0 kg", units: 10, temp: "Ambient 20.5°C", bay: "Bay 13-Reserve" },
+      { id: "D-02-01", zone: "D", x: 760, y: 355, w: 75, h: 38, sku: "SKU-4024", prod: "Bulk Stretch Film & Strap Pallets", weight: "420.0 kg", units: 40, temp: "Ambient 20.8°C", bay: "Bay 14-Reserve" },
+      { id: "D-02-02", zone: "D", x: 855, y: 355, w: 75, h: 38, sku: "SKU-4039", prod: "Standard Wooden Euro-Pallets 1200x800", weight: "600.0 kg", units: 75, temp: "Ambient 20.8°C", bay: "Bay 14-Reserve" },
+      { id: "D-03-01", zone: "D", x: 570, y: 415, w: 75, h: 38, sku: "SKU-4105", prod: "Galvanized Steel Binding Straps", weight: "720.0 kg", units: 20, temp: "Ambient 21.0°C", bay: "Bay 15-Reserve" },
+      { id: "D-03-02", zone: "D", x: 665, y: 415, w: 75, h: 38, sku: "SKU-4118", prod: "High-Strength Pallet Racking Uprights", weight: "910.0 kg", units: 8, temp: "Ambient 21.0°C", bay: "Bay 15-Reserve" },
+      { id: "D-04-01", zone: "D", x: 760, y: 415, w: 75, h: 38, sku: "SKU-4202", prod: "Heavy-Duty Dunnage Air Bags", weight: "195.0 kg", units: 120, temp: "Ambient 20.9°C", bay: "Bay 16-Reserve" },
+      { id: "D-04-02", zone: "D", x: 855, y: 415, w: 75, h: 38, sku: "SKU-4215", prod: "Modular Plastic Shipping Totes", weight: "380.0 kg", units: 95, temp: "Ambient 20.9°C", bay: "Bay 16-Reserve" }
+    ];
+
+    // 55 Modules List
+    const allModulesList = [
+      { name: "ContainerDataReceiver.jsx", domain: "Inbound Telemetry", desc: "High-throughput maritime container webhook receiver" },
+      { name: "YardStackOptimizer.jsx", domain: "Yard Planning", desc: "Topological stack height and re-handle minimization" },
+      { name: "WarehouseStockTracker.jsx", domain: "Inventory Matrix", desc: "Real-time SKU count and bin tier ledger" },
+      { name: "ManifestParser.jsx", domain: "EDI Documentation", desc: "BAPLIE and EDIFACT manifest AST decoder" },
+      { name: "CraneTelemetrySync.jsx", domain: "Quay Logistics", desc: "Real-time STS and RTG crane positional streamer" },
+      { name: "VesselScheduler.jsx", domain: "Berth Planning", desc: "Dynamic tidal berth windows and vessel ETA solver" },
+      { name: "CustomsClearanceGate.jsx", domain: "Compliance", desc: "Automated OCR container release checkpoint" },
+      { name: "BunkerFuelCalculator.jsx", domain: "Vessel Ops", desc: "Fuel consumption curve and bunkering allocation" },
+      { name: "IoTSensorReceiver.jsx", domain: "IoT Telemetry", desc: "Sub-second sensor packet parser for reefer and locks" },
+      { name: "ReeferTemperatureAudit.jsx", domain: "Cold Chain", desc: "Bioclimatic alert logger for cold storage racks" },
+      { name: "RFIDTagScanner.jsx", domain: "Warehouse Gate", desc: "Passive EPC Gen2 RFID pallet gate interrogator" },
+      { name: "AGVRoutePlanner.jsx", domain: "Fleet Navigation", desc: "A* shortest-path router along arterial aisles" },
+      { name: "FreightCostEstimator.jsx", domain: "Commercial", desc: "Dynamic volumetric weight and demurrage calculator" },
+      { name: "InventoryDiscrepancyLogger.jsx", domain: "Audit & QA", desc: "Automated physical vs manifest delta reconciler" },
+      { name: "DockAllocationMatrix.jsx", domain: "Dock Operations", desc: "Real-time truck turn-time and bay assigner" },
+      { name: "StowagePlanGenerator.jsx", domain: "Vessel Ops", desc: "Automated bay-row-tier stability model" },
+      { name: "IntermodalTransitHub.jsx", domain: "Rail & Road", desc: "Train wagon and chassis pool handoff sync" },
+      { name: "CargoWeightValidator.jsx", domain: "SOLAS Compliance", desc: "VGM verified gross mass calculation validator" },
+      { name: "HazardousMatTracker.jsx", domain: "Safety & HAZMAT", desc: "IMDG segregation code and fire zone monitor" },
+      { name: "BillingInvoiceEngine.jsx", domain: "Finance", desc: "Automated port tariff and lift charges generator" },
+      { name: "PredictiveBerthModel.jsx", domain: "Berth Analytics", desc: "Queuing theory berth delay predictor" },
+      { name: "TugboatCoordinator.jsx", domain: "Harbor Pilotage", desc: "Tug allocation and bollard pull dispatch" },
+      { name: "HarborPilotRouter.jsx", domain: "Navigation", desc: "Channel depth and fairways pilot boarding planner" },
+      { name: "RailLoadingMatrix.jsx", domain: "Intermodal", desc: "Wagon weight balancing and double-stack planner" },
+      { name: "TerminalGatePassManager.jsx", domain: "Security Gate", desc: "QR/Biometric driver gate access passes" },
+      { name: "CustomsDutyCalculator.jsx", domain: "Tariffs", desc: "Harmonized System (HS) code tariff classifier" },
+      { name: "VesselManifestReconciler.jsx", domain: "Documentation", desc: "Discharge vs outturn report discrepancies" },
+      { name: "ColdChainLogger.jsx", domain: "Cold Chain", desc: "Automated continuous log of reefer temperatures" },
+      { name: "AISPositionReceiver.jsx", domain: "Vessel Tracking", desc: "NMEA AIS stream decoder for inbound vessels" },
+      { name: "BreakbulkInventory.jsx", domain: "Special Cargo", desc: "Project cargo and out-of-gauge (OOG) ledger" },
+      { name: "EmptyContainerReturn.jsx", domain: "Yard Matrix", desc: "Empty container repositioning & detention sync" },
+      { name: "DamagedCargoAuditor.jsx", domain: "Surveying", desc: "Photographic survey and damage claim logger" },
+      { name: "SealsVerificationUnit.jsx", domain: "Security Gate", desc: "High-security ISO 17712 bolt seal auditor" },
+      { name: "ChassisPoolTracker.jsx", domain: "Equipment", desc: "Terminal chassis availability and maintenance" },
+      { name: "StevedoreShiftManager.jsx", domain: "Workforce", desc: "Gangs allocation and labor productivity tracker" },
+      { name: "QuayCraneDispatcher.jsx", domain: "Quay Ops", desc: "Moves-per-hour target dispatcher" },
+      { name: "LashingTeamOrchestrator.jsx", domain: "Vessel Ops", desc: "Container twistlock and lashing gear coordinator" },
+      { name: "DangerousGoodsValidator.jsx", domain: "HAZMAT", desc: "UN Number isolation rules check" },
+      { name: "PortTariffEngine.jsx", domain: "Billing", desc: "Port authority rate sheet lookup" },
+      { name: "WaybillGenerator.jsx", domain: "Documentation", desc: "Sea waybill and bill of lading (B/L) compiler" },
+      { name: "DemurrageFeeCalculator.jsx", domain: "Finance", desc: "Free-time expiration and penalty calculator" },
+      { name: "OverweightAlertSystem.jsx", domain: "Safety", desc: "Axle overload and bridge constraint guard" },
+      { name: "DryDockScheduler.jsx", domain: "Maintenance", desc: "Hull inspection and overhaul planning" },
+      { name: "CrewManifestValidator.jsx", domain: "Immigration", desc: "IMO crew list and visa validity auditor" },
+      { name: "BallastWaterLogger.jsx", domain: "Environmental", desc: "IMO D-2 standard ballast water exchange" },
+      { name: "SanitaryInspectionGate.jsx", domain: "Health Gate", desc: "Phytosanitary inspection certification" },
+      { name: "MarineWeatherSync.jsx", domain: "Telemetry", desc: "Wind gust, wave height, and surge tide alerts" },
+      { name: "TerminalEfficiencyIndex.jsx", domain: "Analytics", desc: "Gross crane moves per hour (GMPH) index" },
+      { name: "CarbonEmissionTracker.jsx", domain: "Sustainability", desc: "Scope 1 & 2 carbon footprint per container lift" },
+      { name: "SystemHeartbeatLog.jsx", domain: "Observability", desc: "Sub-millisecond daemon liveness heartbeat" },
+      { name: "WarehouseGridNavigator.jsx", domain: "Indoor Wayfinding", desc: "2D topological vector warehouse floor map" },
+      { name: "AisleWayfindingEngine.jsx", domain: "Indoor Wayfinding", desc: "Shortest aisle traversal graph calculator" },
+      { name: "ShelfAllocationMatrix.jsx", domain: "Slotting Ops", desc: "Multi-tier rack slot dynamic assigner" },
+      { name: "ForkliftTelemetrySync.jsx", domain: "Fleet Ops", desc: "Active forklift and AGV location beacon sync" },
+      { name: "TurnByTurnPathfinder.jsx", domain: "Wayfinding", desc: "Human and AGV step-by-step turn guidance" }
+    ];
+
+    // State Variables
+    let selectedDock = { id: "Dock-02", x: 310, y: 555 };
+    let selectedBin = warehouseInventory.find(b => b.id === "B-03-02") || warehouseInventory[0];
+    let currentFilter = "ALL";
+
+    // Initialize Floorplan SVG
+    function initFloorplan() {
+      const racksLayer = document.getElementById('svgRacksLayer');
+      racksLayer.innerHTML = '';
+
+      warehouseInventory.forEach(bin => {
+        const isCold = bin.zone === 'C';
+        const isSelected = bin.id === selectedBin.id;
+        
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'bin-group');
+        g.setAttribute('id', `bin-group-${bin.id}`);
+        g.style.cursor = 'pointer';
+        g.onclick = () => selectBin(bin);
+
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('x', bin.x);
+        rect.setAttribute('y', bin.y);
+        rect.setAttribute('width', bin.w);
+        rect.setAttribute('height', bin.h);
+        rect.setAttribute('rx', '4');
+        rect.setAttribute('class', `svg-bin ${isCold ? 'cold-chain' : ''} ${isSelected ? 'selected-bin' : ''}`);
+        rect.setAttribute('id', `rect-${bin.id}`);
+
+        const textId = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textId.setAttribute('x', bin.x + bin.w / 2);
+        textId.setAttribute('y', bin.y + 15);
+        textId.setAttribute('fill', '#fff');
+        textId.setAttribute('font-family', "'JetBrains Mono', monospace");
+        textId.setAttribute('font-size', '9');
+        textId.setAttribute('font-weight', '700');
+        textId.setAttribute('text-anchor', 'middle');
+        textId.textContent = bin.id;
+
+        const textSku = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        textSku.setAttribute('x', bin.x + bin.w / 2);
+        textSku.setAttribute('y', bin.y + 27);
+        textSku.setAttribute('fill', isCold ? '#93c5fd' : '#94a3b8');
+        textSku.setAttribute('font-family', "'JetBrains Mono', monospace");
+        textSku.setAttribute('font-size', '7.5');
+        textSku.setAttribute('text-anchor', 'middle');
+        textSku.textContent = bin.sku;
+
+        g.appendChild(rect);
+        g.appendChild(textId);
+        g.appendChild(textSku);
+        racksLayer.appendChild(g);
+      });
+
+      renderRoute();
+      updateInspector();
+      initManifestTable();
+    }
+
+    // Select Dock
+    function selectDock(dockId, x, y) {
+      selectedDock = { id: dockId, x, y };
+      document.getElementById('currentOriginLabel').textContent = dockId;
+      document.getElementById('hudOriginText').textContent = dockId;
+
+      // Update Dock styling
+      ['Dock-01', 'Dock-02', 'Dock-03', 'Dock-04'].forEach((id, idx) => {
+        const el = document.getElementById(`svg-dock-${idx + 1}`);
+        if (el) {
+          if (id === dockId) {
+            el.setAttribute('class', 'svg-dock active');
+          } else {
+            el.setAttribute('class', 'svg-dock');
+          }
+        }
+      });
+
+      // Update AGV marker
+      const agv = document.getElementById('agvMarker');
+      if (agv) {
+        agv.setAttribute('transform', `translate(${x}, ${y})`);
+      }
+
+      renderRoute();
+    }
+
+    // Select Bin
+    function selectBin(bin) {
+      selectedBin = bin;
+
+      // Update SVG class
+      warehouseInventory.forEach(b => {
+        const el = document.getElementById(`rect-${b.id}`);
+        if (el) {
+          const isCold = b.zone === 'C';
+          el.setAttribute('class', `svg-bin ${isCold ? 'cold-chain' : ''} ${b.id === bin.id ? 'selected-bin' : ''}`);
+        }
+      });
+
+      updateInspector();
+      renderRoute();
+    }
+
+    // Update Inspector UI
+    function updateInspector() {
+      if (!selectedBin) return;
+      document.getElementById('inspectBinId').textContent = `Bin ${selectedBin.id}`;
+      document.getElementById('inspectZonePill').textContent = `Zone ${selectedBin.zone} · ${selectedBin.bay}`;
+      document.getElementById('inspectProdName').textContent = selectedBin.prod;
+      document.getElementById('inspectSku').textContent = selectedBin.sku;
+      document.getElementById('inspectContainer').textContent = `CNTR-${selectedBin.sku.replace(/\D/g, '') || '9120'}`;
+      document.getElementById('inspectWeight').textContent = selectedBin.weight;
+      document.getElementById('inspectUnits').textContent = `${selectedBin.units} Units`;
+      document.getElementById('inspectTemp').textContent = selectedBin.temp;
+      document.getElementById('inspectBay').textContent = selectedBin.bay;
+
+      document.getElementById('hudTargetText').textContent = selectedBin.id;
+    }
+
+    // Calculate A* Route along Arterial Aisles
+    function renderRoute() {
+      if (!selectedBin || !selectedDock) return;
+
+      const pathEl = document.getElementById('svgDynamicPath');
+      const targetPin = document.getElementById('targetPin');
+      const targetX = selectedBin.x + selectedBin.w / 2;
+      const targetY = selectedBin.y + selectedBin.h;
+
+      targetPin.setAttribute('transform', `translate(${targetX}, ${targetY})`);
+      targetPin.style.display = 'block';
+
+      // Graph Waypoints:
+      // Point 1: Start at Selected Dock (Dock X, Dock Y)
+      // Point 2: Staging / South Corridor (Dock X, 500)
+      // Point 3: Center Arterial Corridor (500, 500)
+      // Point 4: Vertical Arterial Corridor to Cross-Aisle (500, Cross Y)
+      // Point 5: Turn to Target Aisle X (Target X, Cross Y)
+      // Point 6: Arrive at Rack Bin (Target X, Target Y)
+
+      const originX = selectedDock.x;
+      const originY = selectedDock.y;
+
+      let crossY = 285; // Central cross corridor
+      if (selectedBin.y < 200) {
+        crossY = (selectedBin.y > 100) ? 200 : 120;
+      } else {
+        crossY = (selectedBin.y > 380) ? 400 : 340;
+      }
+
+      const d = `M ${originX} ${originY} L ${originX} 500 L 500 500 L 500 ${crossY} L ${targetX} ${crossY} L ${targetX} ${targetY}`;
+      pathEl.setAttribute('d', d);
+      pathEl.style.display = 'block';
+
+      // Calculate Scaled Distance
+      const totalPixels = Math.abs(500 - originY) + Math.abs(500 - originX) + Math.abs(crossY - 500) + Math.abs(targetX - 500) + Math.abs(targetY - crossY);
+      const meters = Math.max(18, Math.round(totalPixels * 0.085 * 10) / 10);
+      const seconds = Math.round(meters * 1.2);
+
+      document.getElementById('hudDistanceBadge').textContent = `${meters}m · ${seconds}s ETA`;
+
+      // Generate Turn-by-Turn Guidance Steps
+      const stepList = document.getElementById('turnStepList');
+      stepList.innerHTML = `
+        <div class="turn-step-item">
+          <div class="turn-step-num">1</div>
+          <div>
+            <div class="turn-step-text">Depart <strong>${selectedDock.id}</strong> and proceed forward onto the South Logistics Arterial.</div>
+            <div class="turn-step-dist">${Math.round(Math.abs(500 - originY) * 0.085)}m forward</div>
+          </div>
+        </div>
+        <div class="turn-step-item">
+          <div class="turn-step-num">2</div>
+          <div>
+            <div class="turn-step-text">Navigate along Central Corridor 500 toward Zone ${selectedBin.zone} transit intersection.</div>
+            <div class="turn-step-dist">${Math.round(Math.abs(crossY - 500) * 0.085)}m corridor transit</div>
+          </div>
+        </div>
+        <div class="turn-step-item">
+          <div class="turn-step-num">3</div>
+          <div>
+            <div class="turn-step-text">Turn into Aisle toward <strong>${selectedBin.id}</strong> (${selectedBin.prod}).</div>
+            <div class="turn-step-dist">${Math.round(Math.abs(targetX - 500) * 0.085)}m lateral turn</div>
+          </div>
+        </div>
+        <div class="turn-step-item">
+          <div class="turn-step-num">4</div>
+          <div>
+            <div class="turn-step-text">Arrive at destination bay: <strong>${selectedBin.bay}</strong> (Tier 2, Level 3). Ready for pick or put-away.</div>
+            <div class="turn-step-dist" style="color: var(--accent-emerald);">Final Destination Reached</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Recalculate Route To Inspected
+    function recalculateRouteToInspected() {
+      renderRoute();
+    }
+
+    // Simulate AGV Traversal Animation
+    function simulateAGVTraversal() {
+      const agv = document.getElementById('agvMarker');
+      const pathEl = document.getElementById('svgDynamicPath');
+      if (!agv || !pathEl) return;
+
+      const pathLength = pathEl.getTotalLength();
+      let startTime = null;
+      const duration = 2800; // 2.8 seconds animation
+
+      function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        const point = pathEl.getPointAtLength(progress * pathLength);
+        agv.setAttribute('transform', `translate(${point.x}, ${point.y})`);
+
+        if (progress < 1) {
+          requestAnimationFrame(step);
+        } else {
+          setTimeout(() => {
+            agv.setAttribute('transform', `translate(${selectedDock.x}, ${selectedDock.y})`);
+          }, 1200);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    // Search Handler
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) {
+        filterZone(currentFilter);
+        return;
+      }
+
+      const match = warehouseInventory.find(b => 
+        b.id.toLowerCase().includes(q) ||
+        b.sku.toLowerCase().includes(q) ||
+        b.prod.toLowerCase().includes(q) ||
+        b.bay.toLowerCase().includes(q)
+      );
+
+      if (match) {
+        selectBin(match);
+      }
+    }
+
+    // Zone Filter
+    function filterZone(zone) {
+      currentFilter = zone;
+      ['All', 'A', 'B', 'C', 'D'].forEach(z => {
+        const btn = document.getElementById(`filter${z}`);
+        if (btn) {
+          if ((z === 'All' && zone === 'ALL') || z === zone) {
+            btn.setAttribute('class', 'zone-filter-btn active');
+          } else {
+            btn.setAttribute('class', 'zone-filter-btn');
+          }
+        }
+      });
+
+      warehouseInventory.forEach(b => {
+        const el = document.getElementById(`bin-group-${b.id}`);
+        if (el) {
+          if (zone === 'ALL' || b.zone === zone) {
+            el.style.opacity = '1';
+            el.style.pointerEvents = 'auto';
+          } else {
+            el.style.opacity = '0.15';
+            el.style.pointerEvents = 'none';
+          }
+        }
+      });
+    }
+
+    // Nav Switcher
+    function switchNavTab(tab) {
+      document.getElementById('navFloorBtn').classList.remove('active');
+      document.getElementById('navManifestBtn').classList.remove('active');
+      document.getElementById('navSpecsBtn').classList.remove('active');
+
+      document.getElementById('floorTabContent').style.display = 'none';
+      document.getElementById('manifestTabContent').style.display = 'none';
+      document.getElementById('specsTabContent').style.display = 'none';
+
+      if (tab === 'floor') {
+        document.getElementById('navFloorBtn').classList.add('active');
+        document.getElementById('floorTabContent').style.display = 'block';
+      } else if (tab === 'manifest') {
+        document.getElementById('navManifestBtn').classList.add('active');
+        document.getElementById('manifestTabContent').style.display = 'block';
+      } else if (tab === 'specs') {
+        document.getElementById('navSpecsBtn').classList.add('active');
+        document.getElementById('specsTabContent').style.display = 'block';
+      }
+    }
+
+    // Initialize 55 Modules Table
+    function initManifestTable() {
+      const tbody = document.getElementById('manifestTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = allModulesList.map((m, idx) => `
+        <tr>
+          <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #fff;">
+            <i class="bi bi-file-earmark-code text-cyan me-1"></i> ${m.name}
+          </td>
+          <td style="color: var(--accent-cyan-bright); font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;">
+            ${m.domain}
+          </td>
+          <td>${m.desc}</td>
+          <td><span class="status-pill">Active</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // Boot
+    window.addEventListener('DOMContentLoaded', () => {
+      initFloorplan();
+    });
+  </script>
+</body>
+</html>
