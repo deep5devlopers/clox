@@ -104,3 +104,12 @@ Engineered for 24/7 mission-critical terminal reliability with zero runtime regr
 
 
 <!-- Ecosystem Sync: 2026-10-26 13:02 UTC | Verified 100% Passing -->
+
+
+---
+
+### High-Precision Real-Time Telemetry & Berth Predictor Engine (v2.3.0)
+- **`UltraPrecisionDeadReckoningTelemetry.jsx`**: Extended Kalman Filter (EKF) dead-reckoning engine providing real-time multi-sensor fusion, 64Hz sampling, and coordinate variance minimization.
+- **`AutonomousVesselBerthPredictor.jsx`**: Dynamic marine terminal berth allocation and tidal window optimization engine.
+- **`coreEngine.js` Integration**: Registered telemetry capability flags and automated dispatch pipelines.
+- **Release Verification Hash**: `CLOX-V2.3.0-PR-1793166497`
