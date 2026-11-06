@@ -91,3 +91,8 @@ For the full, mathematical, and algorithmic specification—including the comple
 ## 📄 License & Distribution
 
 Engineered by **Deep Sanchaniya** (`@deep-00007`, `@deep5devlopers`). All rights reserved. Open for technical evaluation and showcase at [https://deep5devlopers.github.io/clox/](https://deep5devlopers.github.io/clox/).
+
+---
+
+### 🛡️ 2026 Deep Systems Invariant & Provenance
+*© 2026 Deep Systems · Engineered by [Deep Sanchaniya](https://github.com/deep-00007) (`@deep-00007`, `@deep5devlopers`). All rights reserved. High-availability autonomous systems architecture.*
