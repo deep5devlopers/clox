@@ -1,3 +1,8 @@
+/* -------------------------------------------------------------------------- */
+/* © 2026 Deep Systems · Autonomous Engineering Ecosystem                     */
+/* Principal Architect: Deep Sanchaniya (@deep-00007 / @deep5devlopers)       */
+/* -------------------------------------------------------------------------- */
+
 import React, { useState } from 'react';
 
 /**
