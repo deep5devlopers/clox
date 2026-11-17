@@ -1,0 +1,44 @@
+================================================================================
+REPOSITORY OVERVIEW — deep5devlopers/clox
+================================================================================
+
+Repository      : deep5devlopers/clox
+Visibility      : Public
+Default Branch  : main
+Category        : Spatial & Mapping
+Primary Stack   : React JSX, TypeScript, SVG 2D Grid, A* Wayfinding Engine
+Repository URL  : https://github.com/deep5devlopers/clox
+Live URL        : https://deep5devlopers.github.io/clox/
+Last Push (UTC) : 2026-11-06T07:00:41Z
+Generated (UTC) : 2026-11-17 05:57 UTC
+Maintainer      : Deep Sanchaniya (@deep5devlopers / deep5devlopers@gmail.com)
+
+SUMMARY
+--------------------------------------------------------------------------------
+Terminal management suite and real-time indoor navigation grid featuring interactive 2D spatial floorplans, turn-by-turn aisle wayfinding, and sub-12ms routing.
+
+REPOSITORY DESCRIPTION
+--------------------------------------------------------------------------------
+🚢 CLOX Terminal Management Suite & Real-Time Indoor Navigation Grid. Designed & Engineered by Deep Sanchaniya (@deep-00007, @deep5devlopers).
+
+ROOT DIRECTORY STRUCTURE
+--------------------------------------------------------------------------------
+  - .github/
+  - modules/
+  - .gitignore
+  - ARCHITECTURE_BLUEPRINT.md
+  - Clock.jsx
+  - Dashboard.jsx
+  - index.html
+  - README.md
+  - vercel.json
+  - overview.txt
+
+RECENT COMMITS
+--------------------------------------------------------------------------------
+  - 0748c9d | 2026-11-06T07:00:41Z | chore: inject 2026 Deep Systems architectural header into Dashboard.jsx
+  - f5c3cfe | 2026-11-06T07:00:39Z | chore: inject 2026 Deep Systems architectural header into Clock.jsx
+  - fbc2a39 | 2026-11-06T06:59:54Z | docs(architecture): apply standardized 2026 Deep Systems architectural footer
+  - c056e25 | 2026-11-05T06:28:44Z | docs(readme): polish executive README and link to master ARCHITECTURE_BLUEPRINT.md
+  - daac562 | 2026-11-05T06:28:42Z | docs(architecture): deploy comprehensive enterprise architecture blueprint v3.4.0
+================================================================================
